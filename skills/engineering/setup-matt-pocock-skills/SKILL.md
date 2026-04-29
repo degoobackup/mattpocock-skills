@@ -1,6 +1,6 @@
 ---
 name: setup-matt-pocock-skills
-description: Sets up an `## Agent skills` block in AGENTS.md/CLAUDE.md and `docs/agents/` so the engineering skills know this repo's issue tracker (GitHub or local markdown), triage label vocabulary, and domain doc layout. Run before first use of `to-issues`, `to-prd`, `triage`, `diagnose`, `tdd`, `improve-codebase-architecture`, or `zoom-out` — or if those skills appear to be missing context about the issue tracker, triage labels, or domain docs.
+description: Sets up an `## Agent skills` block in AGENTS.md/CLAUDE.md and `docs/agents/` so the engineering skills know this repo's issue tracker (GitHub or local markdown), PRD tracker (same as issues or Notion), triage label vocabulary, and domain doc layout. Run before first use of `to-issues`, `to-prd`, `triage`, `diagnose`, `tdd`, `improve-codebase-architecture`, or `zoom-out` — or if those skills appear to be missing context about the issue tracker, PRD tracker, triage labels, or domain docs.
 disable-model-invocation: true
 ---
 
@@ -9,6 +9,7 @@ disable-model-invocation: true
 Scaffold the per-repo configuration that the engineering skills assume:
 
 - **Issue tracker** — where issues live (GitHub by default; local markdown is also supported out of the box)
+- **PRD tracker** — where PRDs live (same as issue tracker by default; Notion is also supported)
 - **Triage labels** — the strings used for the five canonical triage roles
 - **Domain docs** — where `CONTEXT.md` and ADRs live, and the consumer rules for reading them
 
@@ -29,7 +30,7 @@ Look at the current repo to understand its starting state. Read whatever exists;
 
 ### 2. Present findings and ask
 
-Summarise what's present and what's missing. Then walk the user through the three decisions **one at a time** — present a section, get the user's answer, then move to the next. Don't dump all three at once.
+Summarise what's present and what's missing. Then walk the user through the four decisions **one at a time** — present a section, get the user's answer, then move to the next. Don't dump all four at once.
 
 Assume the user does not know what these terms mean. Each section starts with a short explainer (what it is, why these skills need it, what changes if they pick differently). Then show the choices and the default.
 
@@ -44,7 +45,16 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 - **Local markdown** — issues live as files under `.scratch/<feature>/` in this repo (good for solo projects or repos without a remote)
 - **Other** (Jira, Linear, etc.) — ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
 
-**Section B — Triage label vocabulary.**
+**Section B — PRD tracker.**
+
+> Explainer: The "PRD tracker" is where product requirement documents (PRDs) live for this repo. Skills like `to-prd` write PRDs here. By default, PRDs go to the same place as issues — a GitHub issue, a GitLab issue, or a `.scratch/` file. If your team uses Notion as a task/PRD database, you can route PRDs there instead while issues stay in your issue tracker.
+
+- **Same as issue tracker** (default) — PRDs are created in the same system as issues (GitHub issue, GitLab issue, or `.scratch/` file depending on Section A)
+- **Notion** — PRDs live as pages in a Notion database, accessed via the Notion MCP tools. The user will need to provide the Notion data source ID for the tasks/PRDs database.
+
+If the user picks Notion, ask for the **Tasks data source ID** (the UUID of the Notion database where PRDs should be created). Record it in the output doc.
+
+**Section C — Triage label vocabulary.**
 
 > Explainer: When the `triage` skill processes an incoming issue, it moves it through a state machine — needs evaluation, waiting on reporter, ready for an AFK agent to pick up, ready for a human, or won't fix. To do that, it needs to apply labels (or the equivalent in your issue tracker) that match strings *you've actually configured*. If your repo already uses different label names (e.g. `bug:triage` instead of `needs-triage`), map them here so the skill applies the right ones instead of creating duplicates.
 
@@ -58,7 +68,7 @@ The five canonical roles:
 
 Default: each role's string equals its name. Ask the user if they want to override any. If their issue tracker has no existing labels, the defaults are fine.
 
-**Section C — Domain docs.**
+**Section D — Domain docs.**
 
 > Explainer: Some skills (`improve-codebase-architecture`, `diagnose`, `tdd`) read a `CONTEXT.md` file to learn the project's domain language, and `docs/adr/` for past architectural decisions. They need to know whether the repo has one global context or multiple (e.g. a monorepo with separate frontend/backend contexts) so they look in the right place.
 
@@ -72,7 +82,7 @@ Confirm the layout:
 Show the user a draft of:
 
 - The `## Agent skills` block to add to whichever of `CLAUDE.md` / `AGENTS.md` is being edited (see step 4 for selection rules)
-- The contents of `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, `docs/agents/domain.md`
+- The contents of `docs/agents/issue-tracker.md`, `docs/agents/prd-tracker.md`, `docs/agents/triage-labels.md`, `docs/agents/domain.md`
 
 Let them edit before writing.
 
@@ -97,6 +107,10 @@ The block:
 
 [one-line summary of where issues are tracked]. See `docs/agents/issue-tracker.md`.
 
+### PRD tracker
+
+[one-line summary — "same as issue tracker" or "Notion (Tasks database)"]. See `docs/agents/prd-tracker.md`.
+
 ### Triage labels
 
 [one-line summary of the label vocabulary]. See `docs/agents/triage-labels.md`.
@@ -106,16 +120,21 @@ The block:
 [one-line summary of layout — "single-context" or "multi-context"]. See `docs/agents/domain.md`.
 ```
 
-Then write the three docs files using the seed templates in this skill folder as a starting point:
+When the user chose "same as issue tracker" for Section B, `docs/agents/prd-tracker.md` should simply state that PRDs follow the issue tracker conventions and point back to `docs/agents/issue-tracker.md`.
+
+Then write the docs files using the seed templates in this skill folder as a starting point:
 
 - [issue-tracker-github.md](./issue-tracker-github.md) — GitHub issue tracker
 - [issue-tracker-gitlab.md](./issue-tracker-gitlab.md) — GitLab issue tracker
 - [issue-tracker-local.md](./issue-tracker-local.md) — local-markdown issue tracker
+- [prd-tracker-notion.md](./prd-tracker-notion.md) — Notion PRD tracker
 - [triage-labels.md](./triage-labels.md) — label mapping
 - [domain.md](./domain.md) — domain doc consumer rules + layout
 
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 
+If the user chose "same as issue tracker" for the PRD tracker, write a short `docs/agents/prd-tracker.md` that says PRDs follow the issue tracker conventions and references `docs/agents/issue-tracker.md`. If they chose Notion, use the `prd-tracker-notion.md` seed template, substituting the user's data source ID.
+
 ### 5. Done
 
-Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
+Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers, PRD trackers, or restart from scratch.
