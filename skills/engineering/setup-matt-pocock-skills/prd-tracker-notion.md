@@ -1,12 +1,14 @@
 # PRD tracker: Notion
 
-PRDs live as pages in the Notion **Tasks** database. Use the Notion MCP tools for all operations. (Issues route to GitHub — see `issue-tracker-github.md`.)
+PRDs live as pages in a Notion **Tasks** database. Use the Notion MCP tools for all operations. (Issues route to your separate issue tracker — see `issue-tracker-*.md`.)
 
-- **Tasks data source ID**: `2082aea9-118b-81b5-9256-000b593d6803`
+- **Tasks data source ID**: `<DATA_SOURCE_ID>`
+
+The data source ID above was filled in during `/setup-matt-pocock-skills`. To change it, edit this file directly.
 
 ## Conventions
 
-- **Create a PRD**: `notion-create-page` with `parent: { data_source_id: "2082aea9-118b-81b5-9256-000b593d6803" }`. Set `Task name` (title) and any of `Status`, `Priority`, `Effort level`, `Type`, `Deadline`, `Responsible`, `Project`, `Sprint`, `Parent`. Pass the body as `children` blocks (paragraphs, headings, bulleted lists, code, etc.).
+- **Create a PRD**: `notion-create-page` with `parent: { data_source_id: "<DATA_SOURCE_ID>" }`. Set `Task name` (title) and any of `Status`, `Priority`, `Effort level`, `Type`, `Deadline`, `Responsible`, `Project`, `Sprint`, `Parent`. Pass the body as `children` blocks (paragraphs, headings, bulleted lists, code, etc.).
 - **Read a PRD**: `notion-fetch` with the page URL or UUID — returns properties and full block content. Use `notion-get-page-blocks` if you only need the body or need to paginate through long content.
 - **List PRDs**: `notion-query-database` against the Tasks data source ID with appropriate `filter` (e.g. by `Status`, `Priority`, `Project`, `Sprint`, `Responsible`) and `sorts`. Page size maxes at 100; paginate via `start_cursor`.
 - **Comment on a PRD**: `notion-create-comment` with the page ID as the parent.
@@ -34,7 +36,7 @@ Task IDs in Notion auto-increment with the `IB` prefix (e.g. `IB-1234`).
 
 ## When a skill says "publish a PRD"
 
-Create a Notion page in the Tasks data source (`2082aea9-118b-81b5-9256-000b593d6803`).
+Create a Notion page in the Tasks data source (see ID at the top of this file).
 
 ## When a skill says "fetch the relevant PRD"
 

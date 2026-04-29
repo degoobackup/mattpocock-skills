@@ -50,9 +50,15 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 > Explainer: The "PRD tracker" is where product requirement documents (PRDs) live for this repo. Skills like `to-prd` write PRDs here. By default, PRDs go to the same place as issues — a GitHub issue, a GitLab issue, or a `.scratch/` file. If your team uses Notion as a task/PRD database, you can route PRDs there instead while issues stay in your issue tracker.
 
 - **Same as issue tracker** (default) — PRDs are created in the same system as issues (GitHub issue, GitLab issue, or `.scratch/` file depending on Section A)
-- **Notion** — PRDs live as pages in a Notion database, accessed via the Notion MCP tools. The user will need to provide the Notion data source ID for the tasks/PRDs database.
+- **Notion** — PRDs live as pages in a Notion database, accessed via the Notion MCP tools.
 
-If the user picks Notion, ask for the **Tasks data source ID** (the UUID of the Notion database where PRDs should be created). Record it in the output doc.
+If the user picks Notion, you need the **Tasks data source ID** (the UUID of the Notion database where PRDs should be created). Discover it like this:
+
+1. Ask the user if they already know the data source ID. If yes, use it.
+2. If they don't know, run `notion-search` with the query `"Tasks"` filtered to databases. Surface the candidates (title, parent page, ID) and ask the user to pick the one they want — call out anything that looks like the best fit (e.g. the closest title match, or the database with the most recent activity).
+3. If `notion-search` returns nothing useful, ask the user to share the database URL — the data source ID is the UUID segment at the end of the URL.
+
+Record the chosen ID; it gets substituted into `docs/agents/prd-tracker.md` in step 4.
 
 **Section C — Triage label vocabulary.**
 
@@ -133,7 +139,7 @@ Then write the docs files using the seed templates in this skill folder as a sta
 
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 
-If the user chose "same as issue tracker" for the PRD tracker, write a short `docs/agents/prd-tracker.md` that says PRDs follow the issue tracker conventions and references `docs/agents/issue-tracker.md`. If they chose Notion, use the `prd-tracker-notion.md` seed template, substituting the user's data source ID.
+If the user chose "same as issue tracker" for the PRD tracker, write a short `docs/agents/prd-tracker.md` that says PRDs follow the issue tracker conventions and references `docs/agents/issue-tracker.md`. If they chose Notion, use the `prd-tracker-notion.md` seed template, replacing every `<DATA_SOURCE_ID>` placeholder with the user's actual data source ID (discovered in Section B).
 
 ### 5. Done
 
