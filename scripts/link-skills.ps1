@@ -27,7 +27,7 @@ if (-not (Test-Path $Dest)) {
 }
 
 Get-ChildItem -Path (Join-Path $Repo 'skills') -Filter 'SKILL.md' -Recurse |
-    Where-Object { $_.FullName -notlike '*\node_modules\*' } |
+    Where-Object { $_.FullName -notlike '*\node_modules\*' -and $_.FullName -notlike '*\deprecated\*' } |
     ForEach-Object {
         $src = $_.Directory.FullName
         $name = $_.Directory.Name
