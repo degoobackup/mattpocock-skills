@@ -42,8 +42,19 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 
 - **GitHub** — issues live in the repo's GitHub Issues (uses the `gh` CLI)
 - **GitLab** — issues live in the repo's GitLab Issues (uses the [`glab`](https://gitlab.com/gitlab-org/cli) CLI)
+- **Jira** — issues live in a Jira project, accessed via the Atlassian Rovo MCP tools
 - **Local markdown** — issues live as files under `.scratch/<feature>/` in this repo (good for solo projects or repos without a remote)
-- **Other** (Jira, Linear, etc.) — ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
+- **Other** (Linear, etc.) — ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
+
+If the user picks Jira, you need three values from them before writing `docs/agents/issue-tracker.md`, asked in order:
+
+1. **Project key** (required, no default) — e.g. `PROJ`. This is the prefix on every issue key in the project (`PROJ-123` belongs to project key `PROJ`).
+2. **Epic issue type name** (default `Epic`) — the Jira issue type used for PRDs. Override only if the user's Jira instance uses a non-standard hierarchy (Initiative, Theme, etc.).
+3. **Story issue type name** (default `Story`) — the Jira issue type used for vertical slices from `/to-issues`. Override if the project uses Task, Sub-task, or some custom type instead.
+
+Before offering Jira as a choice, probe the current session for Atlassian Rovo MCP tools — search the available tool manifest for Jira-related tool names (e.g. anything containing `JiraIssue`). If they're absent, still surface Jira as an option but append a one-line warning: "Rovo MCP tools weren't detected in this session — you'll need them available when running `/to-issues`, `/to-prd`, or `/triage`."
+
+Record the three values; they get substituted into the seed template's `<PROJECT_KEY>`, `<EPIC_TYPE>`, and `<STORY_TYPE>` placeholders when writing `docs/agents/issue-tracker.md` in step 4.
 
 **Section B — PRD tracker.**
 
@@ -132,12 +143,15 @@ Then write the docs files using the seed templates in this skill folder as a sta
 
 - [issue-tracker-github.md](./issue-tracker-github.md) — GitHub issue tracker
 - [issue-tracker-gitlab.md](./issue-tracker-gitlab.md) — GitLab issue tracker
+- [issue-tracker-jira.md](./issue-tracker-jira.md) — Jira (via Rovo MCP)
 - [issue-tracker-local.md](./issue-tracker-local.md) — local-markdown issue tracker
 - [prd-tracker-notion.md](./prd-tracker-notion.md) — Notion PRD tracker
 - [triage-labels.md](./triage-labels.md) — label mapping
 - [domain.md](./domain.md) — domain doc consumer rules + layout
 
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
+
+If the user chose Jira, use the `issue-tracker-jira.md` seed template, replacing every `<PROJECT_KEY>`, `<EPIC_TYPE>`, and `<STORY_TYPE>` placeholder with the values collected in Section A.
 
 If the user chose "same as issue tracker" for the PRD tracker, write a short `docs/agents/prd-tracker.md` that says PRDs follow the issue tracker conventions and references `docs/agents/issue-tracker.md`. If they chose Notion, use the `prd-tracker-notion.md` seed template, replacing every `<DATA_SOURCE_ID>` placeholder with the user's actual data source ID (discovered in Section B).
 
