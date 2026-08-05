@@ -1,6 +1,6 @@
 ---
 name: setup-matt-pocock-skills
-description: Configure this repo for the engineering skills — set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other engineering skills.
+description: Sets up an `## Agent skills` block in AGENTS.md/CLAUDE.md and `docs/agents/` so the engineering skills know this repo's issue tracker (GitHub or local markdown), PRD tracker (same as issues or Notion), triage label vocabulary, and domain doc layout. Run before first use of `to-issues`, `to-prd`, `triage`, `diagnosing-bugs`, `tdd`, or `improve-codebase-architecture` — or if those skills appear to be missing context about the issue tracker, PRD tracker, triage labels, or domain docs.
 disable-model-invocation: true
 ---
 
@@ -9,6 +9,7 @@ disable-model-invocation: true
 Scaffold the per-repo configuration that the engineering skills assume:
 
 - **Issue tracker** — where issues live (GitHub by default; local markdown is also supported out of the box)
+- **PRD tracker** — where PRDs live (same as issue tracker by default; Notion is also supported)
 - **Triage labels** — the strings used for the five canonical triage roles
 - **Domain docs** — where `CONTEXT.md` and ADRs live, and the consumer rules for reading them
 
@@ -43,8 +44,9 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 
 - **GitHub** — issues live in the repo's GitHub Issues (uses the `gh` CLI)
 - **GitLab** — issues live in the repo's GitLab Issues (uses the [`glab`](https://gitlab.com/gitlab-org/cli) CLI)
+- **Jira** — issues live in a Jira project, accessed via the Atlassian Rovo MCP tools
 - **Local markdown** — issues live as files under `.scratch/<feature>/` in this repo (good for solo projects or repos without a remote)
-- **Other** (Jira, Linear, etc.) — ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
+- **Other** (Linear, etc.) — ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
 
 Record the choice in `docs/agents/issue-tracker.md`. The GitHub and GitLab templates carry a "PRs as a request surface" flag, defaulted **off** — leave it off and don't raise it; a user who wants external PRs in the triage queue can flip the flag in the file later.
 
@@ -90,6 +92,10 @@ The block:
 
 [one-line summary of where issues are tracked]. See `docs/agents/issue-tracker.md`.
 
+### PRD tracker
+
+[one-line summary — "same as issue tracker" or "Notion (Tasks database)"]. See `docs/agents/prd-tracker.md`.
+
 ### Triage labels
 
 [one-line summary of the label vocabulary]. See `docs/agents/triage-labels.md`.
@@ -105,12 +111,17 @@ Then write the docs files using the seed templates in this skill folder as a sta
 
 - [issue-tracker-github.md](./issue-tracker-github.md) — GitHub issue tracker
 - [issue-tracker-gitlab.md](./issue-tracker-gitlab.md) — GitLab issue tracker
+- [issue-tracker-jira.md](./issue-tracker-jira.md) — Jira (via Rovo MCP)
 - [issue-tracker-local.md](./issue-tracker-local.md) — local-markdown issue tracker
 - [triage-labels.md](./triage-labels.md) — label mapping (only if `triage` is installed)
 - [domain.md](./domain.md) — domain doc consumer rules + layout
 
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 
+If the user chose Jira, use the `issue-tracker-jira.md` seed template, replacing every `<PROJECT_KEY>`, `<EPIC_TYPE>`, and `<STORY_TYPE>` placeholder with the values collected in Section A.
+
+If the user chose "same as issue tracker" for the PRD tracker, write a short `docs/agents/prd-tracker.md` that says PRDs follow the issue tracker conventions and references `docs/agents/issue-tracker.md`. If they chose Notion, use the `prd-tracker-notion.md` seed template, replacing every `<DATA_SOURCE_ID>` placeholder with the user's actual data source ID (discovered in Section B).
+
 ### 5. Done
 
-Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
+Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers, PRD trackers, or restart from scratch.

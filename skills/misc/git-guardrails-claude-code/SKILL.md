@@ -25,18 +25,22 @@ Ask the user: install for **this project only** (`.claude/settings.json`) or **a
 
 ### 2. Copy the hook script
 
-The bundled script is at: [scripts/block-dangerous-git.sh](scripts/block-dangerous-git.sh)
+The bundled scripts are at:
+- **macOS/Linux**: [scripts/block-dangerous-git.sh](scripts/block-dangerous-git.sh)
+- **Windows**: [scripts/block-dangerous-git.ps1](scripts/block-dangerous-git.ps1)
 
-Copy it to the target location based on scope:
+Copy the appropriate script to the target location based on scope:
 
-- **Project**: `.claude/hooks/block-dangerous-git.sh`
-- **Global**: `~/.claude/hooks/block-dangerous-git.sh`
+- **Project**: `.claude/hooks/block-dangerous-git.sh` (or `.ps1` on Windows)
+- **Global**: `~/.claude/hooks/block-dangerous-git.sh` (or `.ps1` on Windows)
 
-Make it executable with `chmod +x`.
+On macOS/Linux, make it executable with `chmod +x`.
 
 ### 3. Add hook to settings
 
 Add to the appropriate settings file:
+
+#### macOS / Linux
 
 **Project** (`.claude/settings.json`):
 
@@ -78,6 +82,48 @@ Add to the appropriate settings file:
 }
 ```
 
+#### Windows
+
+**Project** (`.claude/settings.json`):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"%CLAUDE_PROJECT_DIR%\\.claude\\hooks\\block-dangerous-git.ps1\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Global** (`~/.claude/settings.json`):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"%USERPROFILE%\\.claude\\hooks\\block-dangerous-git.ps1\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
 If the settings file already exists, merge the hook into existing `hooks.PreToolUse` array — don't overwrite other settings.
 
 ### 4. Ask about customization
@@ -88,8 +134,14 @@ Ask if user wants to add or remove any patterns from the blocked list. Edit the 
 
 Run a quick test:
 
+**macOS/Linux:**
 ```bash
 echo '{"tool_input":{"command":"git push origin main"}}' | <path-to-script>
+```
+
+**Windows (PowerShell):**
+```powershell
+'{"tool_input":{"command":"git push origin main"}}' | pwsh -File <path-to-script.ps1>
 ```
 
 Should exit with code 2 and print a BLOCKED message to stderr.
