@@ -14,7 +14,7 @@ npx skills update grill-me
 
 `grill-me` runs a relentless interview about a plan or design, walking every branch of the decision tree until you and the agent reach a **shared understanding**.
 
-It asks **one question at a time** and waits. It never dumps a batch of questions at you — that is bewildering — and where a question can be answered by reading the codebase, it goes and reads rather than asking. Each question comes with the agent's own recommended answer, so you are reacting to a proposal, not staring at a blank prompt.
+It asks in **rounds** and waits. A round is the whole **frontier** — every decision whose prerequisites are already settled — put to you as one numbered list, so you're never asked something that hinges on an answer the agent hasn't heard yet. Where a question can be answered by reading the codebase, it goes and reads rather than asking. Each question comes with the agent's own recommended answer, so you are reacting to a proposal, not staring at a blank prompt.
 
 ## When to reach for it
 
@@ -22,9 +22,9 @@ You invoke this by typing `/grill-me` — the agent won't reach for it on its ow
 
 Reach for it before you build, when a plan feels roughly right but you can sense unresolved decisions hiding in it — the moment you want the soft spots found and forced into the open. If you want that same interrogation to also leave a paper trail of ADRs and a glossary behind, use [grill-with-docs](https://aihero.dev/skills-grill-with-docs) instead. And if the effort is too big to hold in one session and the route to the goal is still foggy — a greenfield project, a huge feature build — start further upstream with [wayfinder](https://aihero.dev/skills-wayfinder), which charts it as a map of decisions first and then merges back into this flow.
 
-## The design tree
+## The decision tree
 
-The session walks the plan as a tree of decisions, resolving dependencies between them one by one — a parent decision settled before the choices that hang off it. The point is not to reach agreement quickly; it is to make every implicit call explicit, so nothing important is left silently assumed. You come out the other side with a plan whose branches have all been visited.
+The session walks the plan as a tree of decisions, settling a parent decision before the choices that hang off it. Your answers reshape the tree and push the frontier outward, so the next round asks whatever they unblocked. The point is not to reach agreement quickly; it is to make every implicit call explicit, so nothing important is left silently assumed. You come out the other side with a plan whose branches have all been visited.
 
 `grill-me` is **stateless**: it writes nothing and leaves no workspace behind. It runs anywhere, and the only artifact is the sharpened understanding in the conversation itself. That is the deliberate contrast with [grill-with-docs](https://aihero.dev/skills-grill-with-docs), which captures the same interview as durable ADRs and a glossary.
 

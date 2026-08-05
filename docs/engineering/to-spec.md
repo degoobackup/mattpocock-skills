@@ -12,7 +12,7 @@ npx skills update to-spec
 
 ## What it does
 
-`to-spec` turns the current conversation and your codebase understanding into a spec (you may know this document as a PRD), then publishes it to your issue tracker.
+`to-spec` turns the current conversation and your codebase understanding into a spec, then publishes it to your issue tracker.
 
 It does **not** interview you again. By the time you reach for it, the alignment work is done — `to-spec` synthesises what is already known rather than asking a fresh round of questions.
 
@@ -57,4 +57,3 @@ grill-with-docs → to-spec → to-tickets → implement → code-review
 ```
 
 Reach for it after the plan and domain language are resolved, and before you break the work into implementation tickets. Its key neighbours are [grill-with-docs](https://aihero.dev/skills-grill-with-docs), which sharpens the context so the spec is precise, and [to-tickets](https://aihero.dev/skills-to-tickets), which turns the spec into a set of tickets for [implement](https://aihero.dev/skills-implement) to build. When you're unsure which skill or flow fits, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
-</content>
